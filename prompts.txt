@@ -1,0 +1,41 @@
+PROMPT 1 - Initial app planning and build
+
+I'm building an "Automata Playground" web app for a class assignment. I'm a student in a Theory of Computation course (DFAs, NFAs, CFGs, pumping lemmas), so the app should be useful for studying. This folder currently contains only Prompts.txt.
+
+Context on current state:
+1. Prompts.txt is my prompt log. Right now, append this prompt to it, under a short descriptive title line like "PROMPT 1 - Initial app planning and build". Separate entries with a few blank lines.
+2. Create a CLAUDE.md in this folder containing this rule so it persists across sessions: "After every user prompt, append the prompt verbatim to Prompts.txt with a short descriptive title line, separated from the previous entry by a few blank lines. Do this before starting the work."
+3. I'm on Windows using PowerShell. Give any terminal commands in PowerShell syntax. The git, gh (GitHub CLI), vercel CLI, and npm are already installed and logged in.
+
+
+Core features of the web app:
+- Draw a DFA or NFA: add states, mark start and accepting states, and add labeled transitions (including epsilon for NFAs).
+- Test input strings against the machine, showing step-by-step which states are active and whether the string is accepted or rejected.
+- Convert an NFA to a DFA using subset construction, shown step by step with the resulting table.
+- Save machines to a database, load them later, and share a machine through a public link.
+Stretch goals (only after the core works): a pumping lemma helper that suggests strings to test, and DFA minimization.
+
+Do not build anything yet. First, explain the realistic options for each decision below, with pros and cons for this use case. Give your recommendation for each, then stop and wait for me to choose:
+- Frontend framework (e.g., plain HTML/JS, Vite + React, Next.js)
+- Language (JavaScript vs TypeScript)
+- Library for drawing the state diagrams (e.g., React Flow, Cytoscape.js, D3, custom SVG)
+- Database/backend for saving and sharing machines (e.g., Supabase, Neon/Vercel Postgres, Vercel KV, Turso/SQLite) and how it would connect to the app
+- Whether to include user accounts, or keep it anonymous with share links
+- How to structure the automata logic so it can be unit tested separately from the UI (this matters because I'll later use a loop to test it automatically)
+- Deployment: Vercel via the vercel CLI, with the code in a GitHub repo created via gh
+
+After I choose, build the app in small steps, run it locally, and list the PowerShell commands to view it. When it works, deploy to Vercel and give me the public URL. Do not ask me to do manual steps that you can do yourself with the installed CLIs, but tell me before doing anything that creates accounts, spends money, or needs secrets, and walk me through any environment variables.
+
+
+
+
+PROMPT 2 - Tech stack choices
+
+Recommendations I agree with: Next.js, Typescript, Cytoscape.js, anonymous share links, lib/automata folder tested via Vitest and fast-check, Github(public) with Vercel.
+
+
+
+
+PROMPT 2 - Tech stack choices (Supabase instead of Neon)
+
+Recommendations I agree with: Next.js, Typescript, Cytoscape.js, anonymous share links, lib/automata folder tested via Vitest and fast-check, Github(public) with Vercel. However, Use Supabase instead of Neon Postgres as I am certainly going to add accounts later and don't want to have to rework that portion
