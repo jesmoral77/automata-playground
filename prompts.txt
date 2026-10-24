@@ -39,3 +39,10 @@ Recommendations I agree with: Next.js, Typescript, Cytoscape.js, anonymous share
 PROMPT 2 - Tech stack choices (Supabase instead of Neon)
 
 Recommendations I agree with: Next.js, Typescript, Cytoscape.js, anonymous share links, lib/automata folder tested via Vitest and fast-check, Github(public) with Vercel. However, Use Supabase instead of Neon Postgres as I am certainly going to add accounts later and don't want to have to rework that portion
+
+
+
+
+PROMPT 3 - Approve Supabase via Vercel Marketplace and deploy
+
+The web app works great, I have tested with homework problems and am yet to see any issues. Yes, use Supabase through the Vercel Marketplace
