@@ -13,10 +13,23 @@
 // token is not in the environment at all: the cloud environment's network
 // secret attaches it to requests for the API host.
 
+import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { readCorpus, writeCorpus, type CorpusEntry } from "./corpus";
 import { STRATEGIES } from "./generate";
+
+// Behind an HTTPS proxy (as in Claude Code cloud sessions, where the proxy also
+// attaches the API token), Node's fetch ignores HTTPS_PROXY unless
+// NODE_USE_ENV_PROXY is set at startup, and must trust the proxy's CA. Re-run
+// this script once with both set.
+if ((process.env.HTTPS_PROXY || process.env.https_proxy) && !process.env.NODE_USE_ENV_PROXY) {
+  const sandboxCa = "/root/.ccr/ca-bundle.crt";
+  const env: NodeJS.ProcessEnv = { ...process.env, NODE_USE_ENV_PROXY: "1", NODE_USE_SYSTEM_CA: "1", NODE_NO_WARNINGS: "1" };
+  if (!env.NODE_EXTRA_CA_CERTS && existsSync(sandboxCa)) env.NODE_EXTRA_CA_CERTS = sandboxCa;
+  const child = spawnSync(process.execPath, [...process.execArgv, ...process.argv.slice(1)], { env, stdio: "inherit" });
+  process.exit(child.status ?? 1);
+}
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const LAST_RUN = fileURLToPath(new URL("./.last-run.json", import.meta.url));

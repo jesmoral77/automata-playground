@@ -1,6 +1,7 @@
 # Project rules
 
 - After every user prompt, append the prompt verbatim to Prompts.txt with a short descriptive title line, separated from the previous entry by a few blank lines. Do this before starting the work.
+  - Exception: automated runs (a scheduled task / routine firing the automata-fuzz-audit loop, or any prompt arriving with a routine-fire payload) are NOT logged to Prompts.txt; the loop prompt was logged once when it was set up, and each run is recorded in the loop_runs table instead. Don't create or edit Prompts.txt in those runs.
 - The user is on Windows using PowerShell. Give any terminal commands in PowerShell syntax.
 
 # Project notes

@@ -74,5 +74,6 @@ These keep an unattended agent from "succeeding" in ways that make the code wors
 - **Cap the work:** one root cause per run, at most 3 fix attempts for it, at most ~30 minutes of fixing. If another distinct failure remains, log it (corpus entry `open`) for a later run.
 - **Stop when not converging.** If attempts oscillate (fixing one case breaks another) or the diagnosis keeps changing, stop after the cap, revert, and log `unresolved`. Don't keep trying.
 - **Stay inside this project folder.** No edits outside the repo, no global installs or config changes, no other repositories. Push only `claude/…` branches of this repo; never push to `main` or the branch you started from, never force-push, never merge your own PR.
+- **Don't log the run prompt to Prompts.txt.** The CLAUDE.md prompt-logging rule exempts automated loop runs; the `loop_runs` record is the log.
 - **Secrets stay where they are.** Never print, commit, or log tokens or keys. The log API token reaches requests through the environment (cloud network secret or `.env.local`); don't look for it or echo it.
 - **Always log exactly one record**, including when something goes wrong mid-run (`--status fail` with the error in `--notes`). If posting fails twice, put the full JSON summary in your final report so a human can backfill it.
