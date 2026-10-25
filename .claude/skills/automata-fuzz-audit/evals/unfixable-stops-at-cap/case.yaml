@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: unfixable-stops-at-cap
+expected_outcome: |
+  When a failure cannot be fixed, the run makes at most 3 fix attempts, reverts its code changes, keeps the case as an open corpus entry, logs status unresolved with a root-cause hypothesis, and stops without weakening any test.

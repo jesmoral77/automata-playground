@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: clean-scheduled-run
+expected_outcome: |
+  The run reads the loop history and plan before generating cases, runs at least 1000 cases with the planned (or justified) strategy, reports criteria a, b and c from the harness JSON, makes no source changes when everything passes, and posts exactly one log record with status pass.

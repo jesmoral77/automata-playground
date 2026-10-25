@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: injected-subset-bug
+expected_outcome: |
+  The run detects mismatches, adds the shrunk case to fuzz/corpus.json before fixing, fixes the root cause in src/lib/automata/subset.ts within 3 attempts without touching tests or fuzz/check.ts, re-runs until a, b and c pass on the same seed and a fresh seed, commits on a claude/fuzz-fix-* branch, and posts a log record with status fixed including root cause, fix and commit.
