@@ -309,56 +309,75 @@ export default function Playground({ initial }: Props) {
 
   return (
     <div className="flex h-screen min-h-[600px] flex-col bg-slate-100 text-slate-900">
-      <header className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white px-4 py-2">
+      <header className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-slate-200 bg-white px-3 py-2 sm:px-4">
         <Link href="/" className="mr-2 text-lg font-bold tracking-tight text-slate-900">
-          Automata Playground
+          Automata<span className="hidden sm:inline"> Playground</span>
         </Link>
-        <input
-          aria-label="Machine name"
-          className="w-48 rounded-md border border-transparent px-2 py-1 text-sm font-medium hover:border-slate-300 focus:border-blue-500 focus:outline-none"
-          value={name}
-          maxLength={100}
-          onChange={(e) => {
-            setName(e.target.value);
-            setDirty(true);
-          }}
-        />
-        <div className="flex overflow-hidden rounded-md border border-slate-300 text-sm" role="group" aria-label="Machine type">
-          {(["DFA", "NFA"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setType(t)}
-              className={`px-3 py-1.5 font-medium ${machine.type === t ? "bg-slate-800 text-white" : "bg-white hover:bg-slate-50"}`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
+        {/* On small screens these controls move to their own single, horizontally scrollable row. */}
+        <div className="no-scrollbar order-last -mx-1 flex w-full items-center gap-2 overflow-x-auto px-1 pb-0.5 lg:order-none lg:mx-0 lg:w-auto lg:overflow-visible lg:px-0 lg:pb-0">
+          <input
+            aria-label="Machine name"
+            className="w-36 shrink-0 sm:w-48 rounded-md border border-transparent px-2 py-1 text-sm font-medium hover:border-slate-300 focus:border-blue-500 focus:outline-none"
+            value={name}
+            maxLength={100}
+            onChange={(e) => {
+              setName(e.target.value);
+              setDirty(true);
+            }}
+          />
+          <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-300 text-sm" role="group" aria-label="Machine type">
+            {(["DFA", "NFA"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setType(t)}
+                className={`px-3 py-1.5 font-medium ${machine.type === t ? "bg-slate-800 text-white" : "bg-white hover:bg-slate-50"}`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
 
-        <select
-          aria-label="Load an example"
-          className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm"
-          value=""
-          onChange={(e) => {
-            const ex = EXAMPLES[Number(e.target.value)];
-            if (ex) loadMachine(ex.machine, ex.name);
-          }}
-        >
-          <option value="">Examples…</option>
-          {EXAMPLES.map((ex, i) => (
-            <option key={ex.name} value={i}>
-              {ex.machine.type}: {ex.name}
-            </option>
-          ))}
-        </select>
-        <Button onClick={() => loadMachine(emptyAutomaton(machine.type), "Untitled")}>New</Button>
-        <Button variant="ghost" onClick={undo} disabled={history.past.length === 0} title="Undo (Ctrl+Z)">
-          ↶ Undo
-        </Button>
-        <Button variant="ghost" onClick={redo} disabled={history.future.length === 0} title="Redo (Ctrl+Y)">
-          ↷ Redo
-        </Button>
+          <select
+            aria-label="Load an example"
+            className="shrink-0 rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm"
+            value=""
+            onChange={(e) => {
+              const ex = EXAMPLES[Number(e.target.value)];
+              if (ex) loadMachine(ex.machine, ex.name);
+            }}
+          >
+            <option value="">Examples…</option>
+            {EXAMPLES.map((ex, i) => (
+              <option key={ex.name} value={i}>
+                {ex.machine.type}: {ex.name}
+              </option>
+            ))}
+          </select>
+          <Button className="shrink-0" onClick={() => loadMachine(emptyAutomaton(machine.type), "Untitled")}>
+            New
+          </Button>
+          <Button
+            variant="ghost"
+            className="shrink-0"
+            onClick={undo}
+            disabled={history.past.length === 0}
+            title="Undo (Ctrl+Z)"
+            aria-label="Undo"
+          >
+            ↶<span className="hidden sm:inline"> Undo</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="shrink-0"
+            onClick={redo}
+            disabled={history.future.length === 0}
+            title="Redo (Ctrl+Y)"
+            aria-label="Redo"
+          >
+            ↷<span className="hidden sm:inline"> Redo</span>
+          </Button>
+        </div>
 
         <div className="ml-auto flex items-center gap-2">
           <MyMachinesMenu currentId={savedId} />
@@ -366,7 +385,7 @@ export default function Playground({ initial }: Props) {
             {saving ? "Saving…" : savedId && !owned ? "Save a copy" : "Save"}
           </Button>
           <Button variant="primary" onClick={share} disabled={saving}>
-            Share link
+            Share<span className="hidden sm:inline"> link</span>
           </Button>
         </div>
       </header>
@@ -390,8 +409,8 @@ export default function Playground({ initial }: Props) {
       )}
 
       <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <section className="relative min-h-[360px] flex-1 bg-white lg:border-r lg:border-slate-200">
-          <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white/95 p-1 shadow-sm">
+        <section className="relative min-h-[60vh] flex-1 bg-white lg:min-h-0 lg:border-r lg:border-slate-200">
+          <div className="no-scrollbar absolute left-2 right-2 top-2 z-10 flex gap-1 overflow-x-auto rounded-lg border border-slate-200 bg-white/95 p-1 shadow-sm sm:left-3 sm:right-auto sm:top-3 [&>*]:shrink-0">
             <Button variant="ghost" active={mode === "select"} onClick={() => changeMode("select")} title="Select / move (V)">
               Select
             </Button>
@@ -536,7 +555,8 @@ function MyMachinesMenu({ currentId }: { currentId: string | null }) {
           setOpen((o) => !o);
         }}
       >
-        My machines ▾
+        <span className="hidden sm:inline">My machines</span>
+        <span className="sm:hidden">Mine</span> ▾
       </Button>
       {open && (
         <div className="absolute right-0 z-20 mt-1 w-80 rounded-md border border-slate-200 bg-white p-2 shadow-lg">

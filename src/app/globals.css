@@ -14,3 +14,11 @@ body {
   color: #0f172a;
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Horizontally scrollable toolbars on small screens: scroll by swipe, no visible bar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
