@@ -70,7 +70,7 @@ export function subsetConstruction(nfa: Automaton): SubsetResult {
       nfaStates: ids,
       name: setName(nfa, ids),
       isStart: rows.length === 0,
-      isAccepting: ids.some((s) => accepting.has(s)),
+      isAccepting: ids.length > 0 && accepting.has(ids[0]),
       transitions: {},
     };
     rows.push(row);
