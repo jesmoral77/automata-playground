@@ -59,7 +59,8 @@ const STYLE: StylesheetJson = [
       "transition-duration": 150,
     },
   },
-  { selector: "node.wide", style: { shape: "round-rectangle", width: "label", "padding-left": "10px", "padding-right": "10px" } as never },
+  // Long labels (e.g. "{q0,q1,q2}" from subset construction) get a wider rounded box.
+  { selector: "node.wide", style: { shape: "round-rectangle", width: "data(width)" } },
   { selector: "node.accepting", style: { "border-style": "double", "border-width": 7 } },
   { selector: "node.active", style: { "background-color": "#fde68a", "border-color": "#b45309" } },
   { selector: "node.pending", style: { "background-color": "#dbeafe", "border-color": "#2563eb" } },
@@ -95,6 +96,22 @@ const STYLE: StylesheetJson = [
   { selector: `edge#${START_ID}-edge`, style: { label: "", "line-color": "#334155", "target-arrow-color": "#334155", events: "no" } },
 ];
 
+/** Text description of the diagram for screen readers (the canvas itself is opaque to them). */
+export function describeMachine(m: Automaton): string {
+  const name = (id: string) => m.states.find((s) => s.id === id)?.label ?? id;
+  if (m.states.length === 0) return `Empty ${m.type} diagram with no states.`;
+  const states = m.states
+    .map((s) => {
+      const tags = [m.start === s.id && "start", m.accepting.includes(s.id) && "accepting"].filter(Boolean);
+      return tags.length ? `${s.label} (${tags.join(", ")})` : s.label;
+    })
+    .join(", ");
+  const edges = groupEdges(m)
+    .map((e) => `${name(e.from)} to ${name(e.to)} on ${e.symbols.join(" or ")}`)
+    .join("; ");
+  return `${m.type} state diagram. States: ${states}. Transitions: ${edges || "none"}.`;
+}
+
 function edgeId(from: string, to: string) {
   return `e:${from}->${to}`;
 }
@@ -116,7 +133,7 @@ function buildElements(m: Automaton, props: Props): ElementDefinition[] {
     ].filter(Boolean);
     els.push({
       group: "nodes",
-      data: { id: s.id, label: s.label },
+      data: { id: s.id, label: s.label, width: Math.min(170, 24 + s.label.length * 8.5) },
       position: s.x !== undefined && s.y !== undefined ? { x: s.x, y: s.y } : undefined,
       classes: classes.join(" "),
     });
@@ -249,5 +266,12 @@ export default function AutomatonCanvas(props: Props) {
     }
   }, [machine, highlight, selection, pendingFrom, fitKey, readOnly]);
 
-  return <div ref={containerRef} className={props.className ?? "h-full w-full"} />;
+  return (
+    <div
+      ref={containerRef}
+      role="img"
+      aria-label={describeMachine(machine)}
+      className={props.className ?? "h-full w-full"}
+    />
+  );
 }
