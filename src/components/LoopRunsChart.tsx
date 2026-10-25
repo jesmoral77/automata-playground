@@ -95,7 +95,12 @@ export default function LoopRunsChart({ runs }: { runs: ChartRun[] }) {
       {h && hover !== null && (
         <div
           className="pointer-events-none absolute top-0 z-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md"
-          style={{ left: `min(calc(${((PAD.left + hover * slot + slot / 2) / W) * 100}% + 8px), calc(100% - 220px))` }}
+          style={(() => {
+            // Beside the bar, on whichever side has room, so it never covers the hovered bar or its label.
+            const pct = ((PAD.left + hover * slot + slot / 2) / W) * 100;
+            const gap = barW / 2 + 8;
+            return pct > 50 ? { right: `calc(${100 - pct}% + ${gap}px)` } : { left: `calc(${pct}% + ${gap}px)` };
+          })()}
         >
           <div className="font-semibold text-slate-900">{h.label}</div>
           <div className="text-slate-600">
