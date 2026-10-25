@@ -5,3 +5,5 @@ export * from "./simulate";
 export * from "./subset";
 export * from "./serialize";
 export * from "./examples";
+export * from "./minimize";
+export * from "./pumping";

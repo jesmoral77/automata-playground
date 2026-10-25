@@ -53,3 +53,10 @@ The web app works great, I have tested with homework problems and am yet to see 
 PROMPT 4 - Supabase terms accepted
 
 done
+
+
+
+
+PROMPT 5 - Stretch goals: DFA minimization and pumping lemma helper
+
+Those won't be an issue, I likely will not be updating this website much beyond the inital implementation. See what you can do about DFA minimization and a pumping lemma helper

@@ -32,17 +32,21 @@ import {
 import AutomatonCanvas, { Highlight, Selection } from "./AutomatonCanvas";
 import EditPanel, { Mode } from "./EditPanel";
 import FormalPanel from "./FormalPanel";
+import MinimizePanel from "./MinimizePanel";
+import PumpingPanel from "./PumpingPanel";
 import SubsetPanel from "./SubsetPanel";
 import TestPanel from "./TestPanel";
 import { Button } from "./ui";
 
-type Tab = "edit" | "test" | "convert" | "formal";
+type Tab = "edit" | "test" | "convert" | "minimize" | "pumping" | "formal";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "edit", label: "Edit" },
-  { id: "test", label: "Test strings" },
-  { id: "convert", label: "NFA → DFA" },
-  { id: "formal", label: "Formal / JSON" },
+  { id: "test", label: "Test" },
+  { id: "convert", label: "NFA→DFA" },
+  { id: "minimize", label: "Minimize" },
+  { id: "pumping", label: "Pumping" },
+  { id: "formal", label: "Formal" },
 ];
 
 const DRAFT_KEY = "automata-playground:draft";
@@ -422,7 +426,7 @@ export default function Playground({ initial }: Props) {
           )}
           <AutomatonCanvas
             machine={machine}
-            highlight={tab === "test" ? highlight : null}
+            highlight={tab === "test" || tab === "pumping" ? highlight : null}
             selection={selection}
             pendingFrom={pendingFrom}
             fitKey={fitKey}
@@ -443,7 +447,7 @@ export default function Playground({ initial }: Props) {
                 key={t.id}
                 type="button"
                 onClick={() => setTab(t.id)}
-                className={`flex-1 px-2 py-2.5 text-sm font-medium ${
+                className={`flex-1 px-1 py-2.5 text-[13px] font-medium whitespace-nowrap ${
                   tab === t.id ? "border-b-2 border-blue-600 text-blue-700" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
@@ -484,6 +488,17 @@ export default function Playground({ initial }: Props) {
                 }}
               />
             )}
+            {tab === "minimize" && (
+              <MinimizePanel
+                machine={machine}
+                issues={issues}
+                onOpenInEditor={(dfa) => {
+                  loadMachine(dfa, `${name} (minimal)`);
+                  setTab("edit");
+                }}
+              />
+            )}
+            {tab === "pumping" && <PumpingPanel machine={machine} issues={issues} onHighlight={setHighlight} />}
             {tab === "formal" && <FormalPanel machine={machine} onImport={(m) => loadMachine(m, name, { keepId: true })} />}
           </div>
         </aside>
