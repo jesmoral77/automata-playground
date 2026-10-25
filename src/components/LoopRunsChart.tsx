@@ -22,8 +22,8 @@ const PAD = { top: 28, right: 12, bottom: 28, left: 48 };
 /** Bars of cases passed per run, with failure markers and a hover tooltip. */
 export default function LoopRunsChart({ runs }: { runs: ChartRun[] }) {
   const [hover, setHover] = useState<number | null>(null);
-  // A minimum drawing width keeps text at its intended size when there are few runs.
-  const W = Math.max(640, runs.length * 44 + PAD.left + PAD.right);
+  // Drawn at natural size (never stretched), so text stays at its intended size.
+  const W = Math.max(480, runs.length * 44 + PAD.left + PAD.right);
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
   const max = Math.max(1000, ...runs.map((r) => r.cases));
@@ -37,8 +37,9 @@ export default function LoopRunsChart({ runs }: { runs: ChartRun[] }) {
     <div className="relative overflow-x-auto">
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        style={{ minWidth: Math.min(W, 640) }}
+        width={W}
+        height={H}
+        style={{ maxWidth: "100%", height: "auto" }}
         role="img"
         aria-label={`Cases passed per run for ${runs.length} runs; ${runs.filter((r) => r.mismatched > 0).length} runs had mismatches. The table below lists every run.`}
         onMouseLeave={() => setHover(null)}
