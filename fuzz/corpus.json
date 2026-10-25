@@ -1,1 +1,55 @@
-[]
+[
+  {
+    "id": "large-1900018277-37",
+    "addedAt": "2026-10-25T02:03:59.553Z",
+    "origin": {
+      "seed": 1900018277,
+      "strategy": "large",
+      "caseIndex": 37
+    },
+    "kind": "subset-language",
+    "detail": "languages differ on \"b\"",
+    "case": {
+      "machine": {
+        "type": "NFA",
+        "states": [
+          {
+            "id": "q3",
+            "label": "q3"
+          },
+          {
+            "id": "q4",
+            "label": "q4"
+          },
+          {
+            "id": "q8",
+            "label": "q8"
+          }
+        ],
+        "alphabet": [
+          "b"
+        ],
+        "start": "q3",
+        "accepting": [
+          "q8"
+        ],
+        "transitions": [
+          {
+            "from": "q3",
+            "to": "q8",
+            "symbol": "b"
+          },
+          {
+            "from": "q3",
+            "to": "q4",
+            "symbol": "b"
+          }
+        ]
+      },
+      "strings": []
+    },
+    "status": "fixed",
+    "rootCause": "subsetConstruction marks a DFA state accepting only if its first NFA state is accepting (accepting.has(ids[0])) instead of any member",
+    "fix": "isAccepting uses ids.some(accepting.has) instead of only ids[0]"
+  }
+]
