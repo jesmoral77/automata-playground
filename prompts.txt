@@ -46,3 +46,10 @@ Recommendations I agree with: Next.js, Typescript, Cytoscape.js, anonymous share
 PROMPT 3 - Approve Supabase via Vercel Marketplace and deploy
 
 The web app works great, I have tested with homework problems and am yet to see any issues. Yes, use Supabase through the Vercel Marketplace
+
+
+
+
+PROMPT 4 - Supabase terms accepted
+
+done
