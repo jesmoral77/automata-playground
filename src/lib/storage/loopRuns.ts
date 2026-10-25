@@ -75,6 +75,9 @@ export async function insertLoopRun(body: unknown): Promise<{ id: number }> {
   const status = String(b.status ?? "");
   if (!STATUSES.has(status)) throw new InvalidRunError(`status must be one of ${[...STATUSES].join(", ")}.`);
   const trigger = TRIGGERS.has(String(b.trigger)) ? String(b.trigger) : "manual";
+  // For fix runs, what was found comes from the failing run that preceded the fix.
+  const detection = b.detection as Record<string, unknown> | null | undefined;
+  const detectionA = (detection?.criteria as Record<string, Record<string, unknown>> | undefined)?.a;
 
   const row = {
     trigger,
@@ -82,7 +85,7 @@ export async function insertLoopRun(body: unknown): Promise<{ id: number }> {
     strategy: s.strategy.slice(0, 64),
     strategy_params: s.strategyParams ?? {},
     case_count: s.caseCount,
-    mismatched_cases: Number(criteria.a.mismatchedCases ?? 0),
+    mismatched_cases: Number(detectionA?.mismatchedCases ?? criteria.a.mismatchedCases ?? 0),
     criterion_a: criteria.a.pass === true,
     criterion_b: criteria.b.pass === true,
     criterion_c: criteria.c.pass === true,
@@ -90,7 +93,7 @@ export async function insertLoopRun(body: unknown): Promise<{ id: number }> {
     unit_passed: typeof criteria.c.passed === "number" ? criteria.c.passed : null,
     unit_failed: typeof criteria.c.failed === "number" ? criteria.c.failed : null,
     status,
-    failing_cases: Array.isArray(s.failingCases) ? s.failingCases.slice(0, 10) : [],
+    failing_cases: (Array.isArray(detection?.failingCases) ? detection.failingCases : Array.isArray(s.failingCases) ? s.failingCases : []).slice(0, 10),
     root_cause: text(b.root_cause),
     fix: text(b.fix),
     commit_hash: text(b.commit_hash, 64),
@@ -98,7 +101,7 @@ export async function insertLoopRun(body: unknown): Promise<{ id: number }> {
     pr_url: text(b.pr_url, 500),
     notes: text(b.notes),
     duration_ms: typeof s.durationMs === "number" ? Math.round(s.durationMs) : null,
-    summary: s,
+    summary: detection ? { ...s, detection } : s,
   };
   const { data, error } = await db().from("loop_runs").insert(row).select("id").single<{ id: number }>();
   if (error) throw new Error(`Could not save loop run: ${error.message}`);

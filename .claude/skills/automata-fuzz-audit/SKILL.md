@@ -27,7 +27,7 @@ and says so is a successful run.
 - `npm run fuzz -- --seed <n> --cases 1000 --strategy <name>` — the audit. Exit code 0 only when a, b and c all pass. Writes `fuzz/.last-run.json`.
 - `npm run fuzz:log -- corpus-add --index <caseIndex> --status fixed|open --root-cause "…" --fix "…"` — adds a shrunk failing case from the last run to `fuzz/corpus.json`.
 - `npm run fuzz:log -- corpus-mark --id <id> --status fixed --fix "…" --commit <sha>`
-- `npm run fuzz:log -- post --status pass|fixed|unresolved|fail --trigger schedule|manual|local [--root-cause …] [--fix …] [--commit …] [--pr …] [--notes …]` — posts the last run plus your annotations.
+- `npm run fuzz:log -- post --status pass|fixed|unresolved|fail --trigger schedule|manual|local [--root-cause …] [--fix …] [--commit …] [--pr …] [--notes …]` — posts the last run plus your annotations. For `fixed`/`unresolved` it automatically attaches the last *failing* run of the same strategy as the detection, so the record shows what was found, not only the clean verification run.
 
 Strategies (see `fuzz/generate.ts`): `baseline`, `wide-alphabet`, `epsilon-heavy`, `edge-cases`, `dense`, `sparse`, `dfa-partial`, `large`.
 

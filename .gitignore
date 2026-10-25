@@ -48,3 +48,5 @@ next-env.d.ts
 
 # fuzz harness scratch output
 fuzz/.last-run.json
+fuzz/.last-failing-run.json
+fuzz/.last-failing-run.json

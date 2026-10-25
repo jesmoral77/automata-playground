@@ -16,6 +16,8 @@ import { caseSeed, generateCase, strategyByName, type FuzzCase } from "./generat
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 export const LAST_RUN_PATH = join(ROOT, "fuzz", ".last-run.json");
+/** The most recent run that did NOT pass: kept so a later fix run can still log what it found. */
+export const LAST_FAILING_RUN_PATH = join(ROOT, "fuzz", ".last-failing-run.json");
 const MIN_CASES = 1000;
 
 function arg(name: string): string | undefined {
@@ -119,6 +121,7 @@ function main() {
     durationMs: Date.now() - started,
   };
   writeFileSync(LAST_RUN_PATH, JSON.stringify(summary, null, 2) + "\n");
+  if (!summary.pass) writeFileSync(LAST_FAILING_RUN_PATH, JSON.stringify(summary, null, 2) + "\n");
   process.stdout.write(JSON.stringify(summary, null, 2) + "\n");
   process.exitCode = summary.pass ? 0 : 1;
 }

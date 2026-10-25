@@ -33,6 +33,7 @@ if ((process.env.HTTPS_PROXY || process.env.https_proxy) && !process.env.NODE_US
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const LAST_RUN = fileURLToPath(new URL("./.last-run.json", import.meta.url));
+const LAST_FAILING_RUN = fileURLToPath(new URL("./.last-failing-run.json", import.meta.url));
 
 // Load .env.local (if present) without overriding real environment variables.
 const envFile = `${ROOT}.env.local`;
@@ -62,6 +63,7 @@ export interface LoopRun {
   criterion_c: boolean;
   status: string;
   failing_cases: unknown[];
+  branch: string | null;
   root_cause: string | null;
   fix: string | null;
   commit_hash: string | null;
@@ -81,7 +83,10 @@ async function history(limit = 50): Promise<LoopRun[]> {
  * found a bug (then re-run it once to look for more of the same class).
  */
 function plan(runs: LoopRun[]) {
-  const newestFirst = [...runs].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  // Runs on demo/ branches test injected bugs, which say nothing about where real bugs hide.
+  const newestFirst = runs
+    .filter((r) => !(r.branch ?? "").startsWith("demo/"))
+    .sort((a, b) => b.created_at.localeCompare(a.created_at));
   const last = newestFirst[0];
   const scores = STRATEGIES.map((s) => {
     const used = newestFirst.filter((r) => r.strategy === s.name);
@@ -107,9 +112,18 @@ function plan(runs: LoopRun[]) {
 
 async function post() {
   const summary = JSON.parse(readFileSync(LAST_RUN, "utf8"));
+  const status = arg("status") ?? (summary.pass ? "pass" : "fail");
+  // A fix run ends on a clean verification run; the failure it found is in
+  // the last failing run of the same strategy, attached here as `detection`.
+  let detection = null;
+  if ((status === "fixed" || status === "unresolved") && existsSync(LAST_FAILING_RUN)) {
+    const failing = JSON.parse(readFileSync(LAST_FAILING_RUN, "utf8"));
+    if (failing.strategy === summary.strategy) detection = failing;
+  }
   const body = {
     summary,
-    status: arg("status") ?? (summary.pass ? "pass" : "fail"),
+    detection,
+    status,
     root_cause: arg("root-cause") ?? null,
     fix: arg("fix") ?? null,
     commit_hash: arg("commit") ?? summary.commit ?? null,
