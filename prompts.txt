@@ -105,3 +105,10 @@ continue
 PROMPT 9 - Continue after restart (Playwright tools loaded)
 
 continue
+
+
+
+
+PROMPT 10 - Disable Vercel preview login protection
+
+1
