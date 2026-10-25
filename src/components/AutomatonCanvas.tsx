@@ -36,6 +36,16 @@ interface Props {
 }
 
 const START_ID = "__start";
+
+/** Fit the diagram into view, without zooming in further than 1.3x on small machines. */
+function fitView(cy: Core) {
+  if (cy.nodes().length === 0 || cy.width() === 0 || cy.height() === 0) return;
+  cy.fit(undefined, 50);
+  if (cy.zoom() > 1.3) {
+    cy.zoom(1.3);
+    cy.center();
+  }
+}
 const START_OFFSET = 70;
 
 const STYLE: StylesheetJson = [
@@ -173,6 +183,8 @@ export default function AutomatonCanvas(props: Props) {
   const cyRef = useRef<Core | null>(null);
   const propsRef = useRef(props);
   const lastFitKey = useRef<string | number | undefined>(undefined);
+  /** Keep re-fitting on container resizes until the user pans or zooms by hand. */
+  const autoFit = useRef(true);
 
   useEffect(() => {
     propsRef.current = props;
@@ -216,8 +228,23 @@ export default function AutomatonCanvas(props: Props) {
       propsRef.current.onNodeMoved?.(evt.target.id(), Math.round(p.x), Math.round(p.y));
     });
 
+    cy.on("dragpan scrollzoom pinchzoom", () => {
+      autoFit.current = false;
+    });
+
+    // Cytoscape measures its container once; tell it when the size changes
+    // (initial layout, window resize, phone rotation) and re-fit if appropriate.
+    const observer = new ResizeObserver(() => {
+      cy.resize();
+      if (autoFit.current) fitView(cy);
+    });
+    observer.observe(containerRef.current!);
+
     propsRef.current.onReady?.(cy);
-    return () => cy.destroy();
+    return () => {
+      observer.disconnect();
+      cy.destroy();
+    };
   }, []);
 
   // Sync elements whenever the machine or highlighting changes.
@@ -258,11 +285,8 @@ export default function AutomatonCanvas(props: Props) {
 
     if (needsLayout || fitKey !== lastFitKey.current) {
       lastFitKey.current = fitKey;
-      if (machine.states.length > 0) cy.fit(undefined, 50);
-      if (cy.zoom() > 1.3) {
-        cy.zoom(1.3);
-        cy.center();
-      }
+      autoFit.current = true;
+      fitView(cy);
     }
   }, [machine, highlight, selection, pendingFrom, fitKey, readOnly]);
 
