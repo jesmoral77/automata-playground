@@ -112,3 +112,64 @@ continue
 PROMPT 10 - Disable Vercel preview login protection
 
 1
+
+
+
+
+PROMPT 11 - Self-improving fuzz-audit loop (skill + Routine): options first
+
+*Log this prompt once, not once per loop run.
+I need to implement a loop process for long-horizon, repeating work that improves itself over time. The requires four components:
+- TRIGGER: the event or schedule that starts a run
+- TASK: the specific objective Claude Code completes each run
+- SUCCESS CRITERIA: a clear, objective benchmark the agent checks its own results against
+- LOGGING: results of every run are stored (in a database) so later runs can review past work and refine their approach
+The implementation path is: use the Skill Creator skill to codify the loop logic as a skill, then turn that skill into a Routine in Claude Code so it runs on a schedule.
+
+My loop for the Automata Playground (same one we just finished up on). I'm on Windows/PowerShell, and git, gh, vercel, and npm are installed and logged in.
+- TRIGGER: scheduled (daily at 7:00 a.m. in production; for my demo I need 3 to 4 runs soon, so also support hourly or manual firing).
+- TASK: a correctness audit. Generate random NFAs and input strings and compare the app's NFA simulation, its subset construction (NFA to DFA), and DFA minimization against an independent brute-force reference implementation.
+- SUCCESS CRITERIA (objective, checked by the run itself):
+  (a) zero mismatches across at least 1,000 random cases,
+  (b) every previously logged failing case still passes (permanent regression corpus),
+  (c) all existing unit tests pass.
+- LOGGING: every run writes a record to a database table: timestamp, random seed, strategy used, case count, pass/fail per criterion, failing cases, root cause, fix, and commit hash.
+- SELF-IMPROVEMENT: each run must READ the log first, replay all previously failing cases, and choose or vary its generation strategy based on what has broken before (e.g., larger alphabets, more epsilon transitions, empty string and single-state edge cases, dense versus sparse transition graphs). It records which strategies find bugs.
+
+STEP 1 - OPTIONS (do not build anything yet)
+Look at the current codebase, then explain the realistic options for each decision below, with pros and cons. Give a recommendation for each, then stop and wait for my choices:
+- Where to store the log: reuse the database I already chose for saved machines (new table) versus a separate store versus a JSON file committed to the repo. Include how the /loop-history page will read it and how the Routine will write to it.
+- How the Routine runs: a Claude Code Routine (cloud versus local; check the current Claude Code docs for exactly how Routines are created, scheduled, and what they can access) versus the fallback of Windows Task Scheduler running `claude -p`. Be honest about any limitation, such as whether a cloud routine can reach my database or my Vercel project.
+- Where fixes land: commit directly to this branch, or open a PR per fix. Recommend what is safest for an automated agent.
+- How to generate random cases reproducibly (seeded RNG) and keep the brute-force reference truly independent of the app's own code.
+- How to handle runs that find a bug it cannot fix (stop and log it versus keep trying).
+
+STEP 2 - After I choose, build the foundation
+1. Write the independent reference implementation and a fuzz harness runnable with a single npm script (for example `npm run fuzz -- --seed 123 --cases 1000`). It must print a machine-readable JSON summary of the three criteria.
+2. Create the log table (or equivalent) and a regression corpus that grows with each failing case. Walk me through any environment variables or secrets before using them, and keep write credentials out of anything shipped to the browser.
+3. Run the harness once manually and show me the results.
+
+STEP 3 - Codify the loop as a skill
+Use the Skill Creator skill to create a skill named `automata-fuzz-audit` that explicitly defines the four components (Trigger, Task, Success Criteria, Logging) and the self-improvement step (read the log first, replay failures, vary strategy). It must include these guardrails: never weaken, skip, or delete tests to make them pass; cap each run at a fixed amount of work (at most 3 fix attempts per failure); stop and log if a fix is not converging; never touch anything outside this project folder.
+
+STEP 4 - Turn the skill into a Routine
+Create the scheduled Routine (or the fallback from Step 1) that runs the skill. Verify against the current docs rather than assuming. Confirm it is created, show me its schedule, and tell me before doing anything that needs secrets, uses significant usage, or creates an account. Explain how I would view its run history.
+
+STEP 5 - Make the loop visible
+Add a public, read-only /loop-history page to the app that reads the log and shows each run: date, strategy, cases run, pass/fail per criterion, failures found, fix, and commit. Include a simple chart of cases-passed or failures over time and a summary of which strategies have found the most bugs.
+
+STEP 6 - Run the loop several times
+Trigger the Routine 3 to 4 times in a row (use the short demo interval or manual firing) so the log shows real iterations and the strategy changing between runs. If runs find no bugs, that is a valid result; say so. Additionally, offer a "proof the loop works" demo: on a throwaway branch only, temporarily inject a known bug into the app's subset construction, run the loop, and show that it detects, logs, and fixes it. Revert that injection so it does not reach the deployed branch unless I say otherwise.
+
+STEP 7 - Deploy and write-up
+1. Deploy this branch to Vercel as a preview and give me the public URL, confirming that /loop-history loads without a login.
+2. Give me a short discussion-board write-up covering: how I defined Trigger, Task, Success Criteria, and Logging; how the skill and Routine were set up; the exact prompts used (including the Routine's own run prompt); how many runs happened; what the loop found, fixed, or confirmed; and how later runs used the log to improve.
+
+Tell me before doing anything that needs secrets, spends money, or creates an account.
+
+
+
+
+PROMPT 12 - Fuzz loop choices: recommendations, Mountain Time, fuzz-audit-loop branch
+
+Recommendations look good to me, Mountain Time, fuzz-audit-loop sounds good as well
