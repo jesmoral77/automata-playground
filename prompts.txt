@@ -60,3 +60,48 @@ done
 PROMPT 5 - Stretch goals: DFA minimization and pumping lemma helper
 
 Those won't be an issue, I likely will not be updating this website much beyond the inital implementation. See what you can do about DFA minimization and a pumping lemma helper
+
+
+
+
+PROMPT 6 - Choose an MCP server or CLI tool to improve the app
+
+I need to find a unique MCP server or CLI tool, install it, and use it to concretely improve the Automata Playground. I'm on Windows/PowerShell, so give all commands in PowerShell syntax.
+
+Look at the current codebase and propose 3 to 4 candidate MCP servers or CLIs that would meaningfully improve this app. For each one, tell me what it does, a specific improvement it would make here, how it installs (for MCP servers, the exact `claude mcp add` command, noting any Windows-specific quirks such as needing a `cmd /c npx` wrapper), any accounts, API keys, or cost involved, and how hard it is. Ideas to consider (not limited to these):
+- Playwright MCP: drive the live app in a browser, find layout and interaction bugs, take screenshots
+- Lighthouse CLI or axe-core CLI: audit performance and accessibility and fix what it finds
+- Context7 MCP: pull current docs for the diagram library I'm using
+- A Mermaid or Graphviz CLI: export machines as images or diagrams
+- A database MCP matching the database I chose, to inspect and manage saved machines
+Recommend one if it sticks out, otherwise give a list of top suggestions. Then stop and wait for me to choose.
+
+After I choose:
+1. Install and configure it, and verify it's connected (`claude mcp list` or the equivalent).
+2. Use it to find at least 2 or 3 real problems or improvements in the app, and show me the evidence (output, screenshots, or audit scores).
+3. Fix them, re-run the tool to confirm the improvement (before/after), and commit with clear messages.
+4. Deploy this branch to Vercel as a preview and give me the public URL, and confirm the URL loads without requiring a login.
+5. Give me a short write-up I can paste into the discussion board: which tool, how I installed it, what it found, what changed, and the before/after result.
+
+Remember to tell me before doing anything that needs secrets, spends money, or creates an account.
+
+
+
+
+PROMPT 7 - Use Playwright MCP
+
+Playwright sounds like the best option. Continue with that
+
+
+
+
+PROMPT 8 - Continue after restarting Claude Code
+
+continue
+
+
+
+
+PROMPT 9 - Continue after restart (Playwright tools loaded)
+
+continue

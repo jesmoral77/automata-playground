@@ -42,3 +42,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Playwright MCP session files
+.playwright-mcp
