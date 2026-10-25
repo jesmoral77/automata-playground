@@ -22,7 +22,8 @@ const PAD = { top: 28, right: 12, bottom: 28, left: 48 };
 /** Bars of cases passed per run, with failure markers and a hover tooltip. */
 export default function LoopRunsChart({ runs }: { runs: ChartRun[] }) {
   const [hover, setHover] = useState<number | null>(null);
-  const W = Math.max(320, runs.length * 44 + PAD.left + PAD.right);
+  // A minimum drawing width keeps text at its intended size when there are few runs.
+  const W = Math.max(640, runs.length * 44 + PAD.left + PAD.right);
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
   const max = Math.max(1000, ...runs.map((r) => r.cases));
