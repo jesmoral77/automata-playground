@@ -173,3 +173,10 @@ Tell me before doing anything that needs secrets, spends money, or creates an ac
 PROMPT 12 - Fuzz loop choices: recommendations, Mountain Time, fuzz-audit-loop branch
 
 Recommendations look good to me, Mountain Time, fuzz-audit-loop sounds good as well
+
+
+
+
+PROMPT 13 - Approve secrets/routine setup (Sonnet 5.5 only)
+
+Keep the model limited to sonnet 5.5, go
