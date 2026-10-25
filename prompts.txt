@@ -180,3 +180,17 @@ Recommendations look good to me, Mountain Time, fuzz-audit-loop sounds good as w
 PROMPT 13 - Approve secrets/routine setup (Sonnet 5.5 only)
 
 Keep the model limited to sonnet 5.5, go
+
+
+
+
+PROMPT 14 - Cloud environment + network secret created, /web-setup run
+
+done
+
+
+
+
+PROMPT 15 - Setup script cleared, retry the routine
+
+script is cleared, try again
