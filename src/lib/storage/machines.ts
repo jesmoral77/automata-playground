@@ -2,8 +2,10 @@
 // Never import this from a client component: it uses the secret key.
 
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { Automaton, parseAutomaton } from "@/lib/automata";
+import { db } from "./supabase";
+
+export { StorageNotConfiguredError } from "./supabase";
 
 export interface SavedMachine {
   id: string;
@@ -11,22 +13,6 @@ export interface SavedMachine {
   machine: Automaton;
   createdAt: string;
   updatedAt: string;
-}
-
-export class StorageNotConfiguredError extends Error {
-  constructor() {
-    super("The database is not configured (missing Supabase environment variables).");
-  }
-}
-
-let client: SupabaseClient | null = null;
-
-function db(): SupabaseClient {
-  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new StorageNotConfiguredError();
-  client ??= createClient(url, key, { auth: { persistSession: false } });
-  return client;
 }
 
 const ID_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

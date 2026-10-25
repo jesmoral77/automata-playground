@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Playwright MCP session files
 .playwright-mcp
+
+# fuzz harness scratch output
+fuzz/.last-run.json
