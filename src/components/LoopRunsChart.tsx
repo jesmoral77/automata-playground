@@ -34,7 +34,8 @@ export default function LoopRunsChart({ runs }: { runs: ChartRun[] }) {
 
   const h = hover === null ? null : runs[hover];
   return (
-    <div className="relative overflow-x-auto">
+    // Wrapper hugs the chart so the tooltip's percentage position lines up with the bars.
+    <div className="relative w-fit max-w-full">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width={W}
