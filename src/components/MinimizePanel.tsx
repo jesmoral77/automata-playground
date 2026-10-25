@@ -118,7 +118,7 @@ function ResultView({
       <div>
         <SectionTitle>Distinguishability table</SectionTitle>
         <div className="mb-2 flex flex-wrap items-center gap-2">
-          <Button onClick={() => setRound(0)} disabled={round === 0}>⏮</Button>
+          <Button onClick={() => setRound(0)} disabled={round === 0} aria-label="Round 0" title="Round 0">⏮</Button>
           <Button onClick={() => setRound(Math.max(0, round - 1))} disabled={round === 0}>◀ Prev</Button>
           <Button onClick={() => setRound(Math.min(lastRound, round + 1))} disabled={finished}>Next ▶</Button>
           <span className="text-sm text-slate-600">

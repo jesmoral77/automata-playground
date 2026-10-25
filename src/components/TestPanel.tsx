@@ -71,6 +71,7 @@ export default function TestPanel({ machine, issues, onHighlight }: Props) {
           }}
         >
           <input
+            aria-label="Input string"
             className={`${inputClass} font-mono`}
             value={input}
             placeholder="leave empty for ε"
@@ -86,16 +87,17 @@ export default function TestPanel({ machine, issues, onHighlight }: Props) {
       {result && current && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Button onClick={() => setStep(0)} disabled={step === 0} title="First step">⏮</Button>
-            <Button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} title="Previous step">◀</Button>
+            <Button onClick={() => setStep(0)} disabled={step === 0} title="First step" aria-label="First step">⏮</Button>
+            <Button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} title="Previous step" aria-label="Previous step">◀</Button>
             <Button
               onClick={() => (done ? (setStep(0), setPlaying(true)) : setPlaying((p) => !p))}
               title="Play / pause"
+              aria-label={playing ? "Pause" : "Play"}
             >
               {playing ? "⏸ Pause" : "▶ Play"}
             </Button>
-            <Button onClick={() => setStep((s) => Math.min(lastStep, s + 1))} disabled={step >= lastStep} title="Next step">▶</Button>
-            <Button onClick={() => setStep(lastStep)} disabled={step >= lastStep} title="Last step">⏭</Button>
+            <Button onClick={() => setStep((s) => Math.min(lastStep, s + 1))} disabled={step >= lastStep} title="Next step" aria-label="Next step">▶</Button>
+            <Button onClick={() => setStep(lastStep)} disabled={step >= lastStep} title="Last step" aria-label="Last step">⏭</Button>
             <span className="text-sm text-slate-600">
               Step {step} / {lastStep}
             </span>
@@ -171,6 +173,7 @@ function BatchTester({ machine }: { machine: Automaton }) {
     <div>
       <SectionTitle>Test many strings</SectionTitle>
       <textarea
+        aria-label="Strings to test, one per line"
         className={`${inputClass} h-24 font-mono`}
         value={text}
         placeholder={"One string per line.\nType ε for the empty string."}

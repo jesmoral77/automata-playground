@@ -103,7 +103,7 @@ function SubsetResultView({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Button onClick={() => setStep(0)} disabled={step === 0}>⏮</Button>
+        <Button onClick={() => setStep(0)} disabled={step === 0} aria-label="First step" title="First step">⏮</Button>
         <Button onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>◀ Prev</Button>
         <Button onClick={() => setStep(Math.min(last, step + 1))} disabled={finished}>Next ▶</Button>
         <Button onClick={() => setStep(last)} disabled={finished}>Finish ⏭</Button>

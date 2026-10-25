@@ -441,11 +441,28 @@ export default function Playground({ initial }: Props) {
         </section>
 
         <aside className="flex max-h-[60vh] w-full flex-col bg-white lg:max-h-none lg:w-[440px]">
-          <nav className="flex border-b border-slate-200">
+          <div
+            role="tablist"
+            aria-label="Tools"
+            className="flex border-b border-slate-200"
+            onKeyDown={(e) => {
+              // Arrow keys move between tabs (WAI-ARIA tabs pattern).
+              if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+              const i = TABS.findIndex((t) => t.id === tab);
+              const next = TABS[(i + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+              setTab(next.id);
+              document.getElementById(`tab-${next.id}`)?.focus();
+            }}
+          >
             {TABS.map((t) => (
               <button
                 key={t.id}
+                id={`tab-${t.id}`}
                 type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                aria-controls="tool-panel"
+                tabIndex={tab === t.id ? 0 : -1}
                 onClick={() => setTab(t.id)}
                 className={`flex-1 px-1 py-2.5 text-[13px] font-medium whitespace-nowrap ${
                   tab === t.id ? "border-b-2 border-blue-600 text-blue-700" : "text-slate-600 hover:text-slate-900"
@@ -454,8 +471,8 @@ export default function Playground({ initial }: Props) {
                 {t.label}
               </button>
             ))}
-          </nav>
-          <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          </div>
+          <div id="tool-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="min-h-0 flex-1 overflow-y-auto p-4">
             {tab === "edit" && (
               <EditPanel
                 machine={machine}
